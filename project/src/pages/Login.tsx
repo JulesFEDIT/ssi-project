@@ -8,13 +8,35 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // VULNERABLE: No rate limiting on login attempts
-    // VULNERABLE: No brute force protection
-    // VULNERABLE: No account lockout
-    console.log('Login attempt:', { email });
-    // Handle login logic here
+    setError(''); // Reset erreur
+  
+    const formData = new URLSearchParams();
+    formData.append("username", email); // correspond à $_POST["username"] dans PHP
+    formData.append("password", password); // correspond à $_POST["password"] dans PHP
+  
+    try {
+      const response = await fetch("http://localhost/moodle-backend/login.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: formData.toString()
+      });
+  
+      const result = await response.text();
+  
+      if (result.trim() === "success") {
+        alert("Connexion réussie !");
+        // Tu peux ici rediriger, ou créer un token, etc.
+      } else {
+        setError("Nom d'utilisateur ou mot de passe incorrect.");
+      }
+    } catch (error) {
+      console.error("Erreur de connexion au serveur :", error);
+      setError("Erreur de connexion au serveur.");
+    }
   };
 
   return (
