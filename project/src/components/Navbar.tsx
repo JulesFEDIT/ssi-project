@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Upload, LogIn } from 'lucide-react';
+import { Shield, Upload, LogIn, Key } from 'lucide-react';
 
 const Navbar = () => {
   return (
@@ -19,6 +19,14 @@ const Navbar = () => {
             <Link to="/login" className="flex items-center space-x-1 px-3 py-2 rounded-md bg-cyan-600 hover:bg-cyan-700 transition">
               <LogIn className="h-5 w-5" />
               <span>Login</span>
+            </Link>
+            {/* Hidden verify button - only visible on hover */}
+            <Link 
+              to="/verify" 
+              className="flex items-center space-x-1 px-3 py-2 rounded-md bg-slate-800 hover:bg-slate-700 transition opacity-0 hover:opacity-100"
+            >
+              <Key className="h-5 w-5" />
+              <span>Verify</span>
             </Link>
           </div>
         </div>
