@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; 
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(''); // Reset erreur
-  
+    setError('');
+
     const formData = new URLSearchParams();
-    formData.append("username", email); // correspond à $_POST["username"] dans PHP
-    formData.append("password", password); // correspond à $_POST["password"] dans PHP
-  
+    formData.append("username", email);
+    formData.append("password", password);
+
     try {
       const response = await fetch("http://localhost/moodle-backend/login.php", {
         method: "POST",
@@ -24,12 +25,12 @@ const Login = () => {
         },
         body: formData.toString()
       });
-  
-      const result = await response.text();
-  
-      if (result.trim() === "success") {
-        alert("Connexion réussie !");
-        // Tu peux ici rediriger, ou créer un token, etc.
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        localStorage.setItem("user", JSON.stringify(result.user));
+        navigate("/home");  
       } else {
         setError("Nom d'utilisateur ou mot de passe incorrect.");
       }
