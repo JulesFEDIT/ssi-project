@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); 
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     const formData = new URLSearchParams();
     formData.append("username", email);
     formData.append("password", password);
 
     try {
-      const response = await fetch("http://localhost/moodle-backend/login.php", {
+      const response = await fetch("http://localhost/login.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
@@ -30,13 +32,15 @@ const Login = () => {
 
       if (result.status === "success") {
         localStorage.setItem("user", JSON.stringify(result.user));
-        navigate("/home");  
+        navigate("/");
       } else {
         setError("Nom d'utilisateur ou mot de passe incorrect.");
       }
     } catch (error) {
       console.error("Erreur de connexion au serveur :", error);
       setError("Erreur de connexion au serveur.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,8 +111,9 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-cyan-600 hover:bg-cyan-700 py-2 px-4 rounded-lg font-medium transition"
+            disabled={loading}
           >
-            Sign In
+            {loading ? "Loading..." : "Sign In"}
           </button>
         </form>
 

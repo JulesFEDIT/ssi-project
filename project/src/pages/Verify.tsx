@@ -20,7 +20,7 @@ const Verify = () => {
   };
 
   const verifyInput2 = () => {
-    if (input2 === 'ValidateMe456') {
+    if (input2 === 'BR4V0_CY83R_CH4MP10NS') {
       setSuccess2(true);
       setError2('');
     } else {
