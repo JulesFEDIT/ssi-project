@@ -2,14 +2,14 @@
 
 ## 🎯 Project Title: Vulnerable & Secured Moodle Façade
 
-A simulated version of the **Moodle platform**, built first with known web vulnerabilities (Phase 1), then gradually hardened with modern web security practices (Phase 2).
+A simulated version of the **Moodle platform**, built first with known web vulnerabilities, then gradually hardened with modern web security practices.
 
 ---
 
-## 🌐 Phase 1 — Creation of the Vulnerable "Moodle Façade"
+## 🌐 Phase 1 — Creation of the Vulnerable website
 
 ### 🧪 Objective
-We decided to implement a **very basic website** that looks authentic but is **deliberately vulnerable**, to serve as a testing environment for exploitation and defense. The website is name **CyberGuard** and it is deployed with Netlify, you can access to it with the link in the repo description.
+We decided to implement a **very basic website** that looks authentic but is **deliberately vulnerable**, to serve as a testing environment for exploitation and defense. The website is named **CyberGuard** and it is deployed with Netlify, you can access to it with the link in the repo description.
 
 ⚠️​We advise you not to refresh the website. It may leads to crash the website.⚠️​
 
@@ -45,43 +45,47 @@ We decided to implement a **very basic website** that looks authentic but is **d
    - Implemented:
      - Rudimentary login system.
 
-4. 🚨 **Intentional Vulnerabilities**
-   - Integrated common security flaws:
-     - ✅ **XSS**: unsanitized input rendered directly in the DOM.
-     - 🔓 **Insecure Authentication**: plaintext passwords, no rate limiting.
-     - 🕳️ **Open Redirects**, lack of CSRF protection (optional).
-     - 💬 No input validation or escaping.
+3. 🚨 **Intentional Vulnerabilities**
+   - Here are our 2 principals integrated common security flaws:
+     - **Insecure Authentication**: inputs fields of the login page are security flaws for the website and the database if they are not well secur
+     - **Upload files**: the upload functionnality represents a great opportunity for attackers to introduces viruses or malicious code into the website.
        
 ---
 
-## 🔒 Phase 2 — Securing the "Moodle Façade"
+## 🔒 Phase 2 — Securing the website
 
 ### 🧠 Objective
-Identify and mitigate the flaws from Phase 1 by applying fundamental web security countermeasures.
+Identify and mitigate the flaws from Phase 1 by applying fundamental web security countermeasures. Our strategy here is to 
 
 ### 🛠️ Tasks Breakdown
 
 1. 🔍 **Security Analysis**
-   - Reviewed source code and functionality from Phase 1.
-   - Identified vulnerabilities:
-     - Reflected XSS on login.
-     - Stored XSS on calendar notes.
-     - Weak authentication and session handling.
+   
+To resume there are two main vectors to exploit
+   - Upload page
+   - Login page
+     
+Identified vulnerabilities:
+   - Upload page
+      - **RCE - Remote Code Execution**: If the server accepts PHP, ASPX, JS or other executable files without blocking or disabling them, an attacker can upload a webshell and execute code remotely.
+      - **Malware / Virus Upload**: A malicious user can host malicious files on your server and distribute them to other users
+      - **XSS via files (Stored XSS)**: Some files can contain malicious JavaScript and lead to cookie theft and identity theft.
+      - **Path Traversal**: If the upload allows the file name or destination path to be specified, an attacker can attempt to write outside the specified folder (../../../../etc/passwd).
+      - **DoS attacks via large files**: Unlimited upload of very large files (>1GB, or zip bombs) can saturate disk space and crash the backend (memory resources exhausted)
+      
+   - Login page
+      - **Injection SQL**: It can leads to login without password, data leakage or corruption.
+      - **Unlocked brute-force**: There is no limit on attempts, no cooldown, no CAPTCHA.
+      - **Too precised error message**: The error message reveals whether or not the user exists.
 
-2. 🛡️ **Implemented Fixes**
-   - ✅ Input validation (server and client-side).
-   - ✅ Output escaping (HTML sanitization, templating with safe rendering).
-   - ✅ Password hashing with `bcrypt` / `argon2`.
-   - ✅ Rate limiting and session management (secure cookies, timeouts).
-   - ✅ HTTPS enforced (if hosted).
-   - ✅ Optional CSRF protection via tokens.
-
-3. 🧪 **Security Testing**
+3. 🛡️ **Implemented Fixes**
+   - Concerning the upload page we focuse 
+4. 🧪 **Security Testing**
    - Manual penetration tests to ensure XSS patches.
    - Password brute force mitigation.
    - Verified no user data was accessible between sessions.
 
-4. 📚 **Security Documentation**
+5. 📚 **Security Documentation**
    - Listed each vulnerability → fix.
    - Detailed code snippets of countermeasures.
    - Provided a table of "Before" vs "After" behavior for each patch.
