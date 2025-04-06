@@ -20,14 +20,6 @@ const Navbar = () => {
               <LogIn className="h-5 w-5" />
               <span>Login</span>
             </Link>
-            {/* Hidden verify button - only visible on hover */}
-            <Link 
-              to="/verify" 
-              className="flex items-center space-x-1 px-3 py-2 rounded-md bg-slate-800 hover:bg-slate-700 transition opacity-0 hover:opacity-100"
-            >
-              <Key className="h-5 w-5" />
-              <span>Verify</span>
-            </Link>
           </div>
         </div>
       </div>

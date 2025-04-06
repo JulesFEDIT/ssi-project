@@ -5,8 +5,7 @@ import Home from './pages/Home';
 import FileUpload from './pages/FileUpload';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Flag1 from './pages/Test';
-import Verify from './pages/Verify';
+
 
 function App() {
   return (
@@ -18,8 +17,6 @@ function App() {
           <Route path="/upload" element={<FileUpload />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/flag1" element={<Flag1 />} />
-          <Route path="/verify" element={<Verify />} />
         </Routes>
       </div>
     </Router>

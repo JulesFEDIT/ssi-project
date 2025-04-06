@@ -35,11 +35,17 @@ We decided to implement a **very basic website** that looks authentic but is **d
    *Login page screenshot*
 2. 🔧 **Basic Backend Simulation**
    - Created a lightweight database with PhpMyAdmin
-   - Implemented:
-     - Rudimentary login system (no hashing, weak session handling).
-     - Static calendar showing fixed events for all users.
+  
+     ![image](https://github.com/user-attachments/assets/aebf6280-33aa-4d38-9081-955c5b5c14dd)
 
-3. 🚨 **Intentional Vulnerabilities**
+   *Structure of the users table screenshot*
+
+   The users table is the unique table of our database.
+   
+   - Implemented:
+     - Rudimentary login system.
+
+4. 🚨 **Intentional Vulnerabilities**
    - Integrated common security flaws:
      - ✅ **XSS**: unsanitized input rendered directly in the DOM.
      - 🔓 **Insecure Authentication**: plaintext passwords, no rate limiting.
