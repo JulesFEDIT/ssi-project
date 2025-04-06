@@ -4,6 +4,13 @@
 
 Following the detailed Red Team exploitation report, we have implemented several critical security enhancements to protect our file upload system. These improvements directly address the vulnerabilities discovered during penetration testing, particularly focusing on preventing PHP code injection in image metadata and double extension bypass attempts.
 
+| Vulnerability | Severity | Description |
+|--------------|----------|-------------|
+| Insecure File Upload | High | Attackers successfully bypassed our upload filtering by embedding PHP code within image metadata and using double extensions |
+| Execution of PHP in Upload Directory | Critical | The server executed PHP files in the upload directory, allowing for remote code execution |
+| Insufficient File Content Inspection | High | Our filtering only checked for blacklisted strings but failed to detect obfuscated code |
+| Inadequate File Naming Controls | Medium | Original filenames with multiple extensions were preserved, enabling extension-based attacks |
+
 ## 🔒 Implemented Security Measures
 
 ### 1. 🤖 Enhanced CAPTCHA System
@@ -45,6 +52,8 @@ const verifyCaptcha = () => {
   return false;
 };
 ```
+
+![alt text](image.png)
 
 ### 2. ✅ Improved Verification Process
 - **Pre-Processing Validation**: CAPTCHA now verified before any file processing operations begin
