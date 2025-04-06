@@ -27,7 +27,6 @@ const FileUpload = () => {
 
   // More secure CAPTCHA generation
   const generateCaptcha = () => {
-    // Combination of letters and numbers to avoid predictable patterns
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
     let captcha = '';
     for (let i = 0; i < 6; i++) {
@@ -38,26 +37,16 @@ const FileUpload = () => {
     setCaptchaVerified(false);
   };
 
-  // Initialize CAPTCHA on component mount
   useEffect(() => {
     generateCaptcha();
   }, []);
 
-  // CAPTCHA verification with timing attack protection
+  // CAPTCHA verification
   const verifyCaptcha = () => {
-    // Secure comparison to avoid timing attacks
-    if (userCaptcha.length === captchaText.length) {
-      let match = true;
-      for (let i = 0; i < captchaText.length; i++) {
-        if (userCaptcha[i] !== captchaText[i]) {
-          match = false;
-        }
-      }
-      if (match) {
-        setCaptchaVerified(true);
-        setError('');
-        return true;
-      }
+    if (userCaptcha === captchaText) {
+      setCaptchaVerified(true);
+      setError('');
+      return true;
     }
     setError('Invalid CAPTCHA code');
     return false;
@@ -68,11 +57,9 @@ const FileUpload = () => {
     setScanning(true);
     setScanResult('');
 
-    // Check against the actual file extension
     const fileNameParts = file.name.toLowerCase().split('.');
     const extension = fileNameParts[fileNameParts.length - 1];
     
-    // Check if extension matches MIME type
     const validExtensions = {
       'pdf': 'application/pdf',
       'doc': 'application/msword',
@@ -102,18 +89,12 @@ const FileUpload = () => {
     }
 
     try {
-      // Content analysis for text files
-      if (file.type.includes('text') || 
-          file.type.includes('pdf') || 
-          file.type.includes('word') ||
-          file.type.includes('document')) {
-        
+      if (file.type.includes('text') || file.type.includes('pdf') || file.type.includes('word') || file.type.includes('document')) {
         const arrayBuffer = await file.arrayBuffer();
         const uint8Array = new Uint8Array(arrayBuffer);
         const textDecoder = new TextDecoder();
         const content = textDecoder.decode(uint8Array);
         
-        // Extended list of dangerous patterns
         const dangerousPatterns = [
           'eval(', 'system(', '<script>', 'Function(', 'exec(', 'shell_exec(', 
           'base64_decode(', 'os.system(', 'compile(', 'os.chmod(', 'os.chown(',
@@ -122,17 +103,15 @@ const FileUpload = () => {
           'child_process', 'spawn(', 'writefilesync'
         ];
 
-        // Regex to detect obfuscated schemes
         const dangerousRegexPatterns = [
-          /(\$|_|\w+)\s*\(\s*(\$|_|\w+)\s*\[\s*['"]?\w+['"]?\s*\]\s*\)/i, // Variable func patterns
-          /\\x[0-9a-f]{2}/i, // Hex encoding
-          /base64_/i, // Base64 related functions
-          /eval\s*\(/i, // Eval with spaces
-          /\\u00[0-9a-f]{2}/i, // Unicode encoding
-          /String\.fromCharCode/i, // JavaScript character code conversion
+          /(\$|_|\w+)\s*\(\s*(\$|_|\w+)\s*\[\s*['"]?\w+['"]?\s*\]/i,
+          /\\x[0-9a-f]{2}/i,
+          /base64_/i,
+          /eval\s*\(/i,
+          /\\u00[0-9a-f]{2}/i,
+          /String\.fromCharCode/i,
         ];
 
-        // Check direct patterns
         for (const pattern of dangerousPatterns) {
           if (content.toLowerCase().includes(pattern.toLowerCase())) {
             setScanResult(`Potentially malicious content detected: ${pattern}`);
@@ -141,7 +120,6 @@ const FileUpload = () => {
           }
         }
 
-        // Check regex patterns
         for (const regex of dangerousRegexPatterns) {
           if (regex.test(content)) {
             setScanResult(`Suspicious pattern detected in the file`);
@@ -151,31 +129,28 @@ const FileUpload = () => {
         }
       }
 
-      // Specific analysis for images
       if (file.type.includes('image')) {
         const arrayBuffer = await file.arrayBuffer();
         const uint8Array = new Uint8Array(arrayBuffer);
-        
-        // Check valid image headers
+
         const pngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
         const jpegSignature = [0xFF, 0xD8, 0xFF];
-        
+
         const isPNG = pngSignature.every((byte, i) => uint8Array[i] === byte);
         const isJPEG = jpegSignature.every((byte, i) => uint8Array[i] === byte);
-        
+
         if (file.type.includes('png') && !isPNG) {
           setScanResult("Invalid PNG header detected");
           setScanning(false);
           return false;
         }
-        
+
         if ((file.type.includes('jpeg') || file.type.includes('jpg')) && !isJPEG) {
           setScanResult("Invalid JPEG header detected");
           setScanning(false);
           return false;
         }
-        
-        // Search for PHP code in binary data
+
         const binaryString = Array.from(uint8Array)
           .map(b => String.fromCharCode(b))
           .join('');
@@ -202,35 +177,31 @@ const FileUpload = () => {
   };
 
   const validateFile = async (file: File): Promise<boolean> => {
-    // Check CAPTCHA BEFORE processing file
     if (!captchaVerified) {
       setError('Please verify CAPTCHA first');
       return false;
     }
 
-    // Check file extension
     const fileNameParts = file.name.toLowerCase().split('.');
     const extension = fileNameParts[fileNameParts.length - 1];
     const validExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
-    
+
     if (!validExtensions.includes(extension)) {
       setError(`Invalid file type. Allowed types: ${allowedExtensions}`);
       return false;
     }
 
-    // Check MIME type
     if (!allowedTypes.includes(file.type)) {
       setError(`Invalid file type. Allowed types: ${allowedExtensions}`);
       return false;
     }
 
-    const maxSize = 100 * 1024 * 1024; // 100MB in bytes
+    const maxSize = 100 * 1024 * 1024;
     if (file.size > maxSize) {
       setError('File size exceeds 100MB limit');
       return false;
     }
 
-    // Advanced security scan
     const scanPassed = await scanFile(file);
     if (!scanPassed) {
       setError('File failed the security scan');
@@ -317,9 +288,7 @@ const FileUpload = () => {
 
       <div className="bg-slate-800 rounded-lg p-8 mb-8">
         <div
-          className={`border-2 border-dashed rounded-lg p-8 text-center ${
-            dragActive ? "border-cyan-500 bg-slate-700/50" : "border-slate-600"
-          } ${error ? "border-red-500" : ""}`}
+          className={`border-2 border-dashed rounded-lg p-8 text-center ${dragActive ? "border-cyan-500 bg-slate-700/50" : "border-slate-600"} ${error ? "border-red-500" : ""}`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
