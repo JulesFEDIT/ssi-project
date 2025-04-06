@@ -67,9 +67,8 @@ const validateFile = async (file: File): Promise<boolean> => {
     setError('Please verify CAPTCHA first');
     return false;
   }
-  
-  // Additional validation steps continue...
 ```
+![image](https://github.com/user-attachments/assets/db0f6fb6-c7af-4929-8691-9fc32cf9bc00)
 
 ### 3. 🔍 Double Extension Detection
 - **Full Filename Analysis**: Comprehensive scanning of complete filenames to detect double extensions (e.g., `.php.png`)
