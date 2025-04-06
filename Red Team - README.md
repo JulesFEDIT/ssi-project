@@ -163,7 +163,7 @@ To improve the defense against such attacks:
 
 ---
 
-"" 🔍 Objective
+## 🔍 Objective
 The goal of this attack was to:
 * Detect SQL injection vulnerabilities in the login process
 * Exploit the injection to extract data from the database
