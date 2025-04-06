@@ -1,7 +1,7 @@
 # 🛡️ SSI Project – Red Team Exploitation Report
 
-Ce rapport présente les différentes tentatives d’exploitation réalisées dans le cadre du projet de sécurité des systèmes d'information (SSI), depuis une machine Kali Linux visant à compromettre le serveur web Moodle hébergé sur Ubuntu.  
-L'objectif : **obtenir un reverse shell** à partir d'une faille d'upload.
+This report presents the various exploitation attempts made as part of the Information Systems Security (ISS) project, from a Kali Linux machine aimed at compromising the Moodle web server hosted on Ubuntu.
+The aim was to obtain a reverse shell using an upload vulnerability.
 
 ---
 
