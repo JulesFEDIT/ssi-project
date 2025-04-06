@@ -45,6 +45,7 @@ const verifyCaptcha = () => {
   return false;
 };
 ```
+![image](https://github.com/user-attachments/assets/f1911e79-8fa5-4808-9556-11fc150c4f1b)
 
 ### 2. ✅ Improved Verification Process
 - **Pre-Processing Validation**: CAPTCHA now verified before any file processing operations begin
