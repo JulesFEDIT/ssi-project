@@ -1,4 +1,4 @@
-# 🛡️ Final Project SSI 2025 — Blue Team (Phases 1 & 2)
+# 🛡️ Final Project SSI 2025 — Blue Team
 
 ## 🎯 Project Title: Vulnerable & Secured Moodle Façade
 
@@ -9,35 +9,43 @@ A simulated version of the **Moodle platform**, built first with known web vulne
 ## 🌐 Phase 1 — Creation of the Vulnerable "Moodle Façade"
 
 ### 🧪 Objective
-Build a **simplified clone of Moodle** that looks authentic but is **deliberately vulnerable**, to serve as a testing environment for exploitation and defense.
+We decided to implement a **very basic website** that looks authentic but is **deliberately vulnerable**, to serve as a testing environment for exploitation and defense. The website is name **CyberGuard** and it is deployed with Netlify, you can access to it with the link in the repo description.
+
+⚠️​We advise you not to refresh the website. It may leads to crash the website.⚠️​
 
 ### 🛠️ Tasks Breakdown
 
-1. 🕷️ **Scraping Moodle**
-   - Scraped HTML and CSS from existing Moodle platforms (login and calendar pages).
-   - Tools used: `BeautifulSoup`, browser dev tools, manual inspection.
+1. 🕷️ **Wesite development**
+   - Developed very simple website about cybersecurity.
+   - 3 main pages :
+        - **Home page**: small presentation of the website
+        - **Upload page**: page where the user is allowed to upload files with some security measures
+        - **Login page**: authentication page with email address and password
+    
+   ![image](https://github.com/user-attachments/assets/be7529f3-fe32-49c2-8386-923346a1826a)
 
-2. 🧱 **Frontend Reconstruction**
-   - Rebuilt interface using HTML/CSS to mimic the original Moodle look.
-   - Maintained minimalist JS logic to reflect user interactions.
+   *Home page screenshot*
 
-3. 🔧 **Basic Backend Simulation**
-   - Created a lightweight server in Python (Flask / PHP / Node).
+   ![image](https://github.com/user-attachments/assets/4823154a-4718-4420-84d2-aefab5051aa1)
+
+   *Upload page screenshot*
+   
+   ![image](https://github.com/user-attachments/assets/3ab85600-f3fb-4253-b4b2-3326737fe53a)
+   
+   *Login page screenshot*
+2. 🔧 **Basic Backend Simulation**
+   - Created a lightweight database with PhpMyAdmin
    - Implemented:
      - Rudimentary login system (no hashing, weak session handling).
      - Static calendar showing fixed events for all users.
 
-4. 🚨 **Intentional Vulnerabilities**
+3. 🚨 **Intentional Vulnerabilities**
    - Integrated common security flaws:
      - ✅ **XSS**: unsanitized input rendered directly in the DOM.
      - 🔓 **Insecure Authentication**: plaintext passwords, no rate limiting.
      - 🕳️ **Open Redirects**, lack of CSRF protection (optional).
      - 💬 No input validation or escaping.
-
-5. 📝 **Documentation**
-   - Detailed the vulnerabilities introduced.
-   - Explained purpose and location of each flaw in the codebase.
-
+       
 ---
 
 ## 🔒 Phase 2 — Securing the "Moodle Façade"
