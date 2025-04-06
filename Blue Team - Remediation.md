@@ -185,6 +185,9 @@ const dangerousRegexPatterns = [
 ];
 ```
 
+![image](https://github.com/user-attachments/assets/0b429802-1969-49bd-a610-f6f713a120c3)
+
+
 ### 7. ⚙️ Complete Pre-Upload Validation
 - **Multi-Layer Verification**: Comprehensive checking of actual file extension
 - **MIME Validation**: Rigorous MIME type validation before acceptance
