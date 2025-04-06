@@ -21,7 +21,7 @@ const Home = () => {
       <div className="grid md:grid-cols-3 gap-8 mb-16">
         <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
           <Lock className="h-12 w-12 text-cyan-500 mb-4" />
-          <h3 className="text-xl font-semibold mb-2">End-to-End Encryption</h3>
+          <h3 className="text-xl font-semibold mb-2">End-to-End Encryption </h3>
           <p className="text-slate-400">Your data is protected with strong encryption at every step.</p>
         </div>
         <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
