@@ -41,9 +41,6 @@ We decided to implement a **very basic website** that looks authentic but is **d
    *Structure of the users table screenshot*
 
    The users table is the unique table of our database.
-   
-   - Implemented:
-     - Rudimentary login system.
 
 3. 🚨 **Intentional Vulnerabilities**
    - Here are our 2 principals integrated common security flaws:
@@ -79,15 +76,55 @@ Identified vulnerabilities:
       - **Too precised error message**: The error message reveals whether or not the user exists.
 
 3. 🛡️ **Implemented Fixes**
-   - Concerning the upload page we focuse 
+   - Concerning the **upload page** we implemented the following security measures:
+     
+        - ​✅​**CAPTCHA system** : CAPTCHA prevents automated attacks, such as brute-force attempts or account enumeration, by forcing human interaction. It therefore strengthens the security of forms against malicious bots.
+        - ✅​**File extension verification**: Checking the file extension during upload filters the authorised file types, reducing the risk of malicious code being executed or potentially dangerous files being uploaded. This helps protect the system against file injection attacks and RCE.
+        - ✅​**File content scanner**: Scanning the contents of files can detect and block malicious software or dangerous scripts, strengthening security against attacks. This helps prevent the execution of unauthorised code and protect the integrity of data and systems.
+        - ✅​**Size file limitation**: Limiting the size of uploaded files helps prevent Denial of Service (DDos) attacks by preventing large uploads that could exhaust server resources. It also helps to maintain storage efficiency and ensure optimum data management.
+    
+   - Concerning the **login page** we implemented the following security measures:
+        - ✅**User input validation**: The email and password fields are marked as required, which ensures that the user cannot submit the form without filling them in. The email field uses the email type, which helps validate the format of the email address.
+        - ✅**Error management**: The connection error message does not specify whether it is the email or the password that is incorrect. This does not give the attacker any clues about the existing users
+        - ✅**Prepared request**: We use PDO (PHP Data Objects) with prepared queries to interact with the database. This helps prevent SQL injections by separating the SQL code from the data supplied by the user.
+          
 4. 🧪 **Security Testing**
-   - Manual penetration tests to ensure XSS patches.
-   - Password brute force mitigation.
-   - Verified no user data was accessible between sessions.
 
-5. 📚 **Security Documentation**
-   - Listed each vulnerability → fix.
-   - Detailed code snippets of countermeasures.
-   - Provided a table of "Before" vs "After" behavior for each patch.
+**Upload file**
 
----
+   - CAPTCHA system test
+          
+![image](https://github.com/user-attachments/assets/4fe3a2df-21d4-4ffa-a65b-8632e463e255)
+
+If we don't verify the captcha we can't upload files, this security measure works.
+
+   - File extension verification test
+
+Only these exetensions are allowed : .pdf, .doc, .docx, .jpg, .png. We tried to upload the following php file :
+![image](https://github.com/user-attachments/assets/0bae4551-599b-434d-9afb-147ebe7cb0c9)
+
+![image](https://github.com/user-attachments/assets/9a3e090f-7d0f-46e9-a016-2ddc86fc194a)
+We observe in the image above the error message informs us that the extension is not compatible. The uplaod is rejected.
+
+   - File content scanner test
+     
+A basic file content scanner verify if the file contains some functions that may use for malicious purposes.
+
+We uplaod the following file with this content:
+
+![image](https://github.com/user-attachments/assets/c2ff4353-1b70-4a75-8b14-ab599222bd96)
+
+This file uses os.system function that may use for execute some malicious commands. We have to protect the website from this kind of attacks. 
+
+![image](https://github.com/user-attachments/assets/8c08e3f2-7592-4e1f-b70d-0c1f7cfb18e2)
+
+As we see, the file is rejected thanks to the scan.
+
+   - Size file limitation test
+
+We verify the size of the file uploaded to preventfor DDoS attack. We will try to upload this file with 104.9MB size.
+![image](https://github.com/user-attachments/assets/0b9961a3-ecee-478f-93de-767776daf562)
+
+![image](https://github.com/user-attachments/assets/01eebe02-eb40-4c25-863a-1932137a5940)
+
+The upload is rejected because the file is too big. Actually, the size limit is fixed to 100MB maximum.
