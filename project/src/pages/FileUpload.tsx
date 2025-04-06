@@ -8,12 +8,12 @@ const FileUpload = () => {
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState<string>('');
   
-  // CAPTCHA states
+  // CAPTCHA states with enhanced security
   const [captchaText, setCaptchaText] = useState<string>('');
   const [userCaptcha, setUserCaptcha] = useState<string>('');
   const [captchaVerified, setCaptchaVerified] = useState<boolean>(false);
 
-  // Define allowed file types
+  // Allowed file types
   const allowedTypes = [
     'application/pdf',
     'application/msword',
@@ -22,74 +22,178 @@ const FileUpload = () => {
     'image/png'
   ];
 
-  // File extensions for display
+  // Extensions for display
   const allowedExtensions = '.pdf, .doc, .docx, .jpg, .png';
 
-  // VULNERABLE: Simple captcha generation
+  // More secure CAPTCHA generation
   const generateCaptcha = () => {
-    // VULNERABLE: Predictable pattern - only numbers
-    const captcha = Math.floor(Math.random() * 9000 + 1000).toString();
+    // Combination of letters and numbers to avoid predictable patterns
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    let captcha = '';
+    for (let i = 0; i < 6; i++) {
+      captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
     setCaptchaText(captcha);
     setUserCaptcha('');
     setCaptchaVerified(false);
   };
 
-  // Initialize captcha on component mount
+  // Initialize CAPTCHA on component mount
   useEffect(() => {
     generateCaptcha();
   }, []);
 
-  // VULNERABLE: Simple string comparison
+  // CAPTCHA verification with timing attack protection
   const verifyCaptcha = () => {
-    if (userCaptcha === captchaText) {
-      setCaptchaVerified(true);
-      setError('');
-      return true;
+    // Secure comparison to avoid timing attacks
+    if (userCaptcha.length === captchaText.length) {
+      let match = true;
+      for (let i = 0; i < captchaText.length; i++) {
+        if (userCaptcha[i] !== captchaText[i]) {
+          match = false;
+        }
+      }
+      if (match) {
+        setCaptchaVerified(true);
+        setError('');
+        return true;
+      }
     }
     setError('Invalid CAPTCHA code');
     return false;
   };
 
-  // Basic signature scanning - VULNERABLE: Only checks for exact matches
+  // Deep file scan
   const scanFile = async (file: File): Promise<boolean> => {
     setScanning(true);
     setScanResult('');
 
-    try {
-      const text = await file.text(); // VULNERABLE: Assumes file is text-based
-      const dangerousPatterns = [
-        'eval(',
-        'system(',
-        '<script>',
-        'Function(',
-        'exec(',
-        'shell_exec(',
-        'base64_decode(',
-        'os.system(',
-        'compile(',
-        'os.chmod(',
-        'os.chown(',
-        'passthru(',
-        'pcntl_exec(',
-        'posix_getuid(',
-        'posix_setuid(',
-        'pty.spawn('
-      ];
+    // Check against the actual file extension
+    const fileNameParts = file.name.toLowerCase().split('.');
+    const extension = fileNameParts[fileNameParts.length - 1];
+    
+    // Check if extension matches MIME type
+    const validExtensions = {
+      'pdf': 'application/pdf',
+      'doc': 'application/msword',
+      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png'
+    };
+    
+    const expectedMimeType = validExtensions[extension as keyof typeof validExtensions];
+    if (expectedMimeType && file.type !== expectedMimeType) {
+      setScanResult('File type does not match extension');
+      setScanning(false);
+      return false;
+    }
 
-      // VULNERABLE: Simple string matching without context
-      for (const pattern of dangerousPatterns) {
-        if (text.includes(pattern)) {
-          setScanResult(`Potentially malicious content detected: ${pattern}`);
+    // Check for double extensions
+    if (fileNameParts.length > 2) {
+      const suspiciousExtensions = ['php', 'js', 'html', 'exe', 'sh', 'asp', 'cgi', 'pl'];
+      for (const ext of suspiciousExtensions) {
+        if (fileNameParts.includes(ext)) {
+          setScanResult(`Potentially dangerous extension detected: ${ext}`);
           setScanning(false);
           return false;
         }
       }
+    }
 
-      setScanResult('File scan completed: No threats detected');
+    try {
+      // Content analysis for text files
+      if (file.type.includes('text') || 
+          file.type.includes('pdf') || 
+          file.type.includes('word') ||
+          file.type.includes('document')) {
+        
+        const arrayBuffer = await file.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const textDecoder = new TextDecoder();
+        const content = textDecoder.decode(uint8Array);
+        
+        // Extended list of dangerous patterns
+        const dangerousPatterns = [
+          'eval(', 'system(', '<script>', 'Function(', 'exec(', 'shell_exec(', 
+          'base64_decode(', 'os.system(', 'compile(', 'os.chmod(', 'os.chown(',
+          'passthru(', 'pcntl_exec(', 'posix_getuid(', 'posix_setuid(', 'pty.spawn(',
+          '<?php', '<?=', '<%', '<asp:', 'fromcharcode', 'document.write', '.exec',
+          'child_process', 'spawn(', 'writefilesync'
+        ];
+
+        // Regex to detect obfuscated schemes
+        const dangerousRegexPatterns = [
+          /(\$|_|\w+)\s*\(\s*(\$|_|\w+)\s*\[\s*['"]?\w+['"]?\s*\]\s*\)/i, // Variable func patterns
+          /\\x[0-9a-f]{2}/i, // Hex encoding
+          /base64_/i, // Base64 related functions
+          /eval\s*\(/i, // Eval with spaces
+          /\\u00[0-9a-f]{2}/i, // Unicode encoding
+          /String\.fromCharCode/i, // JavaScript character code conversion
+        ];
+
+        // Check direct patterns
+        for (const pattern of dangerousPatterns) {
+          if (content.toLowerCase().includes(pattern.toLowerCase())) {
+            setScanResult(`Potentially malicious content detected: ${pattern}`);
+            setScanning(false);
+            return false;
+          }
+        }
+
+        // Check regex patterns
+        for (const regex of dangerousRegexPatterns) {
+          if (regex.test(content)) {
+            setScanResult(`Suspicious pattern detected in the file`);
+            setScanning(false);
+            return false;
+          }
+        }
+      }
+
+      // Specific analysis for images
+      if (file.type.includes('image')) {
+        const arrayBuffer = await file.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        
+        // Check valid image headers
+        const pngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+        const jpegSignature = [0xFF, 0xD8, 0xFF];
+        
+        const isPNG = pngSignature.every((byte, i) => uint8Array[i] === byte);
+        const isJPEG = jpegSignature.every((byte, i) => uint8Array[i] === byte);
+        
+        if (file.type.includes('png') && !isPNG) {
+          setScanResult("Invalid PNG header detected");
+          setScanning(false);
+          return false;
+        }
+        
+        if ((file.type.includes('jpeg') || file.type.includes('jpg')) && !isJPEG) {
+          setScanResult("Invalid JPEG header detected");
+          setScanning(false);
+          return false;
+        }
+        
+        // Search for PHP code in binary data
+        const binaryString = Array.from(uint8Array)
+          .map(b => String.fromCharCode(b))
+          .join('');
+          
+        const phpPatterns = ['<?php', '<?=', '<%', 'system(', 'eval(', 'exec('];
+        for (const pattern of phpPatterns) {
+          if (binaryString.includes(pattern)) {
+            setScanResult(`Potentially malicious code detected in image metadata`);
+            setScanning(false);
+            return false;
+          }
+        }
+      }
+
+      setScanResult('Scan complete: No threats detected');
       setScanning(false);
       return true;
     } catch (err) {
-      // VULNERABLE: Generic error handling
       console.error('Scan failed:', err);
       setScanResult('File scan failed');
       setScanning(false);
@@ -98,14 +202,25 @@ const FileUpload = () => {
   };
 
   const validateFile = async (file: File): Promise<boolean> => {
-    // VULNERABLE: CAPTCHA check after file processing started
+    // Check CAPTCHA BEFORE processing file
     if (!captchaVerified) {
       setError('Please verify CAPTCHA first');
       return false;
     }
 
+    // Check file extension
+    const fileNameParts = file.name.toLowerCase().split('.');
+    const extension = fileNameParts[fileNameParts.length - 1];
+    const validExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+    
+    if (!validExtensions.includes(extension)) {
+      setError(`Invalid file type. Allowed types: ${allowedExtensions}`);
+      return false;
+    }
+
+    // Check MIME type
     if (!allowedTypes.includes(file.type)) {
-      setError(`Invalid file type. Allowed types are: ${allowedExtensions}`);
+      setError(`Invalid file type. Allowed types: ${allowedExtensions}`);
       return false;
     }
 
@@ -115,10 +230,10 @@ const FileUpload = () => {
       return false;
     }
 
-    // VULNERABLE: Scan happens after type validation
+    // Advanced security scan
     const scanPassed = await scanFile(file);
     if (!scanPassed) {
-      setError('File failed security scan');
+      setError('File failed the security scan');
       return false;
     }
 
