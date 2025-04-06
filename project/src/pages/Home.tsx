@@ -32,7 +32,7 @@ const Home = () => {
         <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
           <UserCheck className="h-12 w-12 text-cyan-500 mb-4" />
           <h3 className="text-xl font-semibold mb-2">Advanced Authentication</h3>
-          <p className="text-slate-400">Multi-factor authentication and secure login protocols.</p>
+          <p className="text-slate-400">Multi-factor authentication (MFA) and secure login protocols.</p>
         </div>
       </div>
 
