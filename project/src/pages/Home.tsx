@@ -22,7 +22,7 @@ const Home = () => {
         <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
           <Lock className="h-12 w-12 text-cyan-500 mb-4" />
           <h3 className="text-xl font-semibold mb-2">End-to-End Encryption</h3>
-          <p className="text-slate-400">Your data is protected with military-grade encryption at every step.</p>
+          <p className="text-slate-400">Your data is protected with strong encryption at every step.</p>
         </div>
         <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
           <FileKey className="h-12 w-12 text-cyan-500 mb-4" />
