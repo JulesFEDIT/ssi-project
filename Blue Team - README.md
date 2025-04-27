@@ -184,7 +184,7 @@ const verifyCaptcha = () => {
   return false;
 };
 ```
-![image](/images/captcha.png)
+![captcha](https://github.com/user-attachments/assets/56df04cd-6f19-4d21-a97d-d977d9b67d5f)
 
 ### 2. ✅ Improved Verification Process
 - **Pre-Processing Validation**: CAPTCHA now verified before any file processing operations begin
@@ -198,7 +198,8 @@ const validateFile = async (file: File): Promise<boolean> => {
     return false;
   }
 ```
-![image](/images/captcha2.png)
+![captcha2](https://github.com/user-attachments/assets/1e0ef9ee-cb9d-4132-b062-fda10b38fbf7)
+
 
 ### 3. 🔍 Double Extension Detection
 - **Full Filename Analysis**: Comprehensive scanning of complete filenames to detect double extensions (e.g., `.php.png`)
@@ -314,7 +315,8 @@ const dangerousRegexPatterns = [
 ];
 ```
 
-![image](/images/part6.png)
+![part6](https://github.com/user-attachments/assets/66963613-1e3b-4dd6-b4f9-9b79d7936168)
+
 
 
 ### 7. ⚙️ Complete Pre-Upload Validation
